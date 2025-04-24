@@ -6,10 +6,10 @@ from pymongo.server_api import ServerApi
 
 
 url_main = 'https://quotes.toscrape.com'
-is_next = True
 qoutes = []
 links_about = set()
 url_next = url_main
+is_next = True
 while is_next:
     response = requests.get(url_next)
     soup = BeautifulSoup(response.text, 'lxml')
@@ -66,7 +66,7 @@ with open('./dz_2/authors.json', 'w', encoding='utf-8') as file:
     json.dump(authors, file, ensure_ascii=False, indent=2)
 
 client = MongoClient(
-    "mongodb+srv://vitalii:12051987@tormalin.nrp1r.mongodb.net/",
+    "my_host",
     server_api=ServerApi('1')
 )
 
@@ -76,10 +76,6 @@ with open('./dz_2/quotes.json', 'r', encoding='utf-8') as file:
     data_quotes = json.load(file)
     coll_quotes = db.quotes
     coll_quotes.insert_many(data_quotes)
-
-    # result = coll_quotes.find({})
-    # for el in result:
-    #     print(el)
 
 with open('./dz_2/authors.json', 'r', encoding='utf-8') as file:
     data_authors = json.load(file)
