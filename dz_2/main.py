@@ -1,6 +1,10 @@
 import json
 import requests
 from bs4 import BeautifulSoup
+from pymongo import MongoClient
+from pymongo.server_api import ServerApi
+
+
 url_main = 'https://quotes.toscrape.com'
 is_next = True
 qoutes = []
@@ -38,8 +42,8 @@ while is_next:
     else:
         is_next = False
 
-quotes_json = json.dumps(qoutes, indent=2, ensure_ascii=False)
-print(quotes_json)
+with open('./dz_2/quotes.json', 'w', encoding='utf-8') as file:
+    json.dump(qoutes, file, ensure_ascii=False, indent=2)
 
 authors = []
 for link_about in links_about:
@@ -58,5 +62,26 @@ for link_about in links_about:
         }
     )
 
-authors_json = json.dumps(authors, indent=4, ensure_ascii=False)
-print(authors_json)
+with open('./dz_2/authors.json', 'w', encoding='utf-8') as file:
+    json.dump(authors, file, ensure_ascii=False, indent=2)
+
+client = MongoClient(
+    "mongodb+srv://vitalii:12051987@tormalin.nrp1r.mongodb.net/",
+    server_api=ServerApi('1')
+)
+
+db = client.goit_ds_hw_03_dz2
+
+with open('./dz_2/quotes.json', 'r', encoding='utf-8') as file:
+    data_quotes = json.load(file)
+    coll_quotes = db.quotes
+    coll_quotes.insert_many(data_quotes)
+
+    # result = coll_quotes.find({})
+    # for el in result:
+    #     print(el)
+
+with open('./dz_2/authors.json', 'r', encoding='utf-8') as file:
+    data_authors = json.load(file)
+    coll_authors = db.authors
+    coll_authors.insert_many(data_authors)
